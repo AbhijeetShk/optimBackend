@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { shortenUrl,  redirectUrl, getStats, removeUrl } from "../controllers/url.controller.js";
-import { validateUrlMiddleware } from "../middleware/validate.middlware.js";
+import { validate } from "../middleware/validate.middlware.js";
+import { creatUrlSchema } from "../middleware/url.validator.js";
 
 const router = Router();
-router.post("/shorten", validateUrlMiddleware, shortenUrl);
+router.post("/shorten", validate(creatUrlSchema), shortenUrl);
 router.get("/stats/:code", getStats);
 router.delete("/:code", removeUrl);
 router.get("/:code", redirectUrl);

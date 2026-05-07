@@ -1,12 +1,13 @@
+import { prisma } from "../lib/prisma.js";
 import { urlDB, type UrlData } from "../models/url.model.js";
 
 import { generateCode } from "../utils/generateCode.js";
 
-export const createShortUrl = (
+export const createShortUrl = async(
   originalUrl: string,
   customAlias?: string,
   expiryMinutes?: number,
-): UrlData => {
+): Promise<UrlData> => {
   const shortCode = customAlias || generateCode();
   const urlData: UrlData = {
     originalUrl,
@@ -18,11 +19,22 @@ export const createShortUrl = (
       : undefined,
   };
   urlDB.set(shortCode, urlData);
+  const newUrl = await prisma.url.create({
+    data: {
+        originalUrl,
+        shortCode,
+    }
+  })
   return urlData;
 };
 
 
-export const getUrl = (code: string): UrlData | undefined => {
+export const getUrl = async(code: string): Promise<UrlData | undefined> => {
+    await prisma.url.findUnique({
+        where:{
+            shortCode: code
+        }
+    })
     return urlDB.get(code);
 };
 

@@ -3,7 +3,7 @@ import { createShortUrl, deleteUrl, getUrl, incrementVisits } from "../services/
 
 // import { createShortUrl,getUrl, deleteUrl, incrementVisits } from "./../services/url.service";  
 
-export const shortenUrl = (req: Request, res:Response)=>{
+export const shortenUrl = async (req: Request, res:Response)=>{
     const {url, customAlias, expiryMinutes} = req.body;
 
     if(!url){
@@ -13,7 +13,7 @@ export const shortenUrl = (req: Request, res:Response)=>{
     }
 
     try{
-        const data = createShortUrl(url, customAlias, expiryMinutes)
+        const data = await createShortUrl(url, customAlias, expiryMinutes)
     
 
     return res.status(201).json({
@@ -29,9 +29,9 @@ export const shortenUrl = (req: Request, res:Response)=>{
 };
 }
 
-export const redirectUrl = (req:Request, res:Response)=>{
+export const redirectUrl = async (req:Request, res:Response)=>{
 const {code} = req.params;
-const data = getUrl(code as string);
+const data = await getUrl(code as string);
 
 if(!data){
     return res.status(404).json({
@@ -47,9 +47,9 @@ incrementVisits(code as string);
 return res.redirect(data.originalUrl);
 }
 
-export const getStats = (req: Request, res:Response)=>{
+export const getStats = async (req: Request, res:Response)=>{
     const {code} = req.params;
-    const data = getUrl(code as string);
+    const data = await getUrl(code as string);
     if(!data){
         return res.status(404).json({
 message: "URL not found",

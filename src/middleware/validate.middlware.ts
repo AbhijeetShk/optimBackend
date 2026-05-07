@@ -1,17 +1,45 @@
-import type {Request, Response, NextFunction} from "express"
+// import type {Request, Response, NextFunction} from "express"
+// import type {ZodType} from "zod";
+// export const validateUrlMiddleware = (req: Request, res: Response, next: NextFunction)=>{
+//     const {originalUrl} = req.body;
+//     if(!originalUrl || typeof originalUrl !== "string"){
+//         return res.status(400).json({error: "Invalid URL"})
+//     }
+//     try{
+//         new URL(originalUrl);
+//     }catch{
+//         return res.status(400).json({
+//             success:false,
+//             message: "Invalid URL format"
+//         })
+//     }
+//     next(); 
+// }
+import type {
+  Request,
+  Response,
+  NextFunction
+} from "express";
 
-export const validateUrlMiddleware = (req: Request, res: Response, next: NextFunction)=>{
-    const {originalUrl} = req.body;
-    if(!originalUrl || typeof originalUrl !== "string"){
-        return res.status(400).json({error: "Invalid URL"})
+import type { ZodType } from "zod";
+
+export const validate =
+  (schema: ZodType) =>
+  (
+    req: Request,
+    res: Response,
+    next: NextFunction
+  ) => {
+    const result = schema.safeParse(req.body);
+
+    if (!result.success) {
+      return res.status(400).json({
+        success: false,
+        errors: result.error.issues
+      });
     }
-    try{
-        new URL(originalUrl);
-    }catch{
-        return res.status(400).json({
-            success:false,
-            message: "Invalid URL format"
-        })
-    }
-    next(); 
-}
+
+    req.body = result.data;
+
+    next();
+  };
