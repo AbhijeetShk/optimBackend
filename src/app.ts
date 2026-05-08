@@ -9,6 +9,7 @@ const app = express();
 app.use(express.json());
 app.use(morgan("dev"))
 app.use(loggerMiddleware)
+app.use("/auth", authRoutes);
 app.use("/", urlRoutes);
 app.use(errorMiddleware)
 

@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { shortenUrl,  redirectUrl, getStats, removeUrl } from "../controllers/url.controller.js";
 import { validate } from "../middleware/validate.middlware.js";
-import { creatUrlSchema } from "../middleware/url.validator.js";
+import { creatUrlSchema } from "../validators/url.validator.js";
 
 const router = Router();
 router.post("/shorten", validate(creatUrlSchema), shortenUrl);
